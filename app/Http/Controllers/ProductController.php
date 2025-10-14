@@ -11,6 +11,7 @@ class ProductController extends Controller
     public function create(CreateProductRequest $request)
     {
         Product::create($request->validated()); // kratki put upisa u tabelu
-        //dd($request->validated()); // dobijamo samo podatke koji su prosli validaciju
+
+        return redirect('/');
     }
 }
