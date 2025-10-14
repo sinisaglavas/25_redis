@@ -17,9 +17,10 @@ class HomeController extends Controller
 //            $products = Product::latest()->take(9)->get();
 //            Cache::put('allProducts', $products, '300'); // 300 sec ne gubi podatke
 //        }
-        $products = Cache::remember('allProducts', '300', function (){
-            return Product::latest()->take(9)->get(); // ovaj kod menja onaj gore u komentaru
-        });
+//        $products = Cache::remember('allProducts', '300', function (){
+//            return Product::latest()->take(9)->get(); // ovaj kod menja onaj gore u komentaru
+//        });
+        $products = Cache::remember('allProducts', '300', fn() => Product::latest()->take(9)->get()); // arrow function
 
         return view('welcome', [
             'products' => $products,
