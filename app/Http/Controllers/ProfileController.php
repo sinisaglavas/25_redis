@@ -24,8 +24,9 @@ class ProfileController extends Controller
 
     public function changeAvatar(NewAvatarRequest $request)
     {
-        $request->file('profile_image')->store('images', 'public');
-
+        $filePath = $request->file('profile_image')->store('images', 'public');
+        $name = basename($filePath); // izvlacimo samo zadnji deo od cele putanje - samo ime slike
+        Auth::user()->update(['profile_image' => $name]);
     }
 
     /**
