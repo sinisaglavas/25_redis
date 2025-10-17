@@ -7,6 +7,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -24,7 +25,14 @@ class ProfileController extends Controller
 
     public function changeAvatar(NewAvatarRequest $request)
     {
-        $filePath = $request->file('profile_image')->store('images/avatars', 'public');
+       $profileImage = Auth::user()->profile_image;
+        if ($profileImage !== null)
+        {
+            // mora se obrisati i u storage folderu - moraju duple zagrade
+            File::delete("storage/images/avatars/$profileImage");
+        }
+        $filePath = $request->file('profile_image')
+            ->store('images/avatars', 'public');
         $name = basename($filePath); // izvlacimo samo zadnji deo od cele putanje - samo ime slike
         Auth::user()->update(['profile_image' => $name]);
     }
