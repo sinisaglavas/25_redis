@@ -15,6 +15,11 @@
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
+                    <div>
+                        <img class="rounded-lg" src="/storage/images/avatars/{{ \Illuminate\Support\Facades\Auth::user()->profile_image }}"
+                             alt="Avatar"
+                             width="100" height="100">
+                    </div>
                     <form action="{{ route('profile.changeAvatar') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-4">
