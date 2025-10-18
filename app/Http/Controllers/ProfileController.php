@@ -4,18 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\NewAvatarRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+   use ImageUploadTrait;
+
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -25,16 +28,16 @@ class ProfileController extends Controller
 
     public function changeAvatar(NewAvatarRequest $request)
     {
-       $profileImage = Auth::user()->profile_image;
-        if ($profileImage !== null)
-        {
-            // mora se obrisati i u storage folderu - moraju duple zagrade
-            File::delete("storage/images/avatars/$profileImage");
-        }
-        $filePath = $request->file('profile_image')
-            ->store('images/avatars', 'public');
-        $name = basename($filePath); // izvlacimo samo zadnji deo od cele putanje - samo ime slike
+        $profileImage = Auth::user()->profile_image;
+        $profileImage !== null ? File::delete("storage/images/avatars/$profileImage") : null;
+        // $profileImage && File::delete("storage/images/avatars/$profileImage"); // ako ima vrednost obrisi ga
+
+        $name = $this->uploadImage($request->file('profile_image'), 'images/avatars');
+
+        // $name = basename($filePath); // izvlacimo samo zadnji deo od cele putanje - samo ime slike
         Auth::user()->update(['profile_image' => $name]);
+
+        return redirect()->back();
     }
 
     /**
